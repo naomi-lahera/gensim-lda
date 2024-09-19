@@ -6,24 +6,40 @@ from src.utils import *
 from src.preprocess import build_vocab
 from src.metrics import *
 import numpy as np
+import sys
     
 def print_topics(ldaModel):
     pprint(ldaModel.print_topics())
         
 if __name__ == '__main__':
-    num_topics = 3
-    texts = load_file(Path.dataset_path)
-    tokenized_texts, _dict, trans_TFIDF = build_vocab(texts)
-    print('Builded vocabulary ✅')
+    if len(sys.argv) != 2:
+        print("running hyperparameters.py")
+        sys.exit(1)
+
+    config_path = sys.argv[1]
+    configuracion = cargar_configuracion(config_path)
     
-    left_topics, right_topics = 3, 5
+    num_topics = configuracion['k_fit_eval']
     
-    _alpha = list(np.arange(0.1, 1, 0.3))
+    left_topics = configuracion['lk_hyperparameters']
+    right_topics = configuracion['rg_hyperparameters']
+    lalpha = configuracion['lalpha_hyperparameters']
+    ralpha = configuracion['ralpha_hyperparameters']
+    alpha_step = configuracion['alpha_step_hyperparameters']
+    lbeta = configuracion['lbeta_hyperparameters']
+    rbeta = configuracion['lbeta_hyperparameters']
+    beta_step = configuracion['beta_step_hyperparameters']
+    
+    _alpha = list(np.arange(lalpha, ralpha, alpha_step))
     _alpha.append('symmetric')
     _alpha.append('asymmetric')
 
-    _beta = list(np.arange(0.1, 1, 0.3))
+    _beta = list(np.arange(lbeta, rbeta, beta_step))
     _beta.append('symmetric')
+    
+    texts = load_file(Path.dataset_path)
+    tokenized_texts, _dict, trans_TFIDF = build_vocab(texts)
+    print('Builded vocabulary ✅')
     
     coherences = []
     for k in range(left_topics, right_topics + 1):

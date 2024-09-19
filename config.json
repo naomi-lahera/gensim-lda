@@ -1,0 +1,11 @@
+{
+    "k_fit_eval": 3,
+    "lk_hyperparameters": 3,
+    "rg_hyperparameters": 5,
+    "lalpha_hyperparameters": 0.1,
+    "ralpha_hyperparameters": 1,
+    "alpha_step_hyperparameters": 0.3,
+    "lbeta_hyperparameters": 0.1,
+    "rbeta_hyperparameters": 1,
+    "beta_step_hyperparameters": 0.3
+}
