@@ -3,15 +3,17 @@ from utils import *
 
 def build():
     dataset = ir_datasets.load("cranfield")
-    print('__loaded-dataset__')
     
     texts = []
-    for doc in dataset.docs_iter()[:20]:
+    for doc in dataset.docs_iter()[:700]:
         texts.append(doc[2])
-        print(doc[2][:5])
     
     save_file(texts, Path.dataset)
     
-def __init__():
-    print('__init__')
+if __name__ == '__main__':    
+    create_folder_if_not_exists(Path.data.value)
+    
+    print('Loading...')
     build()
+    print('✅ Loaded dataset (700 texts).')
+    
