@@ -36,6 +36,7 @@ if __name__ == '__main__':
     _beta = list(np.arange(lbeta, rbeta, beta_step))
     _beta.append('symmetric')
     
+    print('Builded vocabulary ✅')
     texts = load_file(Path.dataset_path.value)
     tokenized_texts, _dict, trans_TFIDF = build_vocab(texts)
     
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     # ldaModel = lda(trans_TFIDF, num_topics =3, id2word =_dict)                
     # index = 0 
     
-    print('Builded vocabulary ✅')
+    
     
     coherences = []
     for k in range(left_topics, right_topics + 1):
