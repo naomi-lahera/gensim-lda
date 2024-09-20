@@ -12,7 +12,7 @@ class Path(Enum):
     dataset = 'data/dataset.joblib'
     data = 'data/'
     result = 'results/'
-    result_topics = 'results/topics.csv'
+    result_topics_hiper = 'results/fixed-hyperparameters/topics.csv'
     result_default_hiper = 'results/default-hyperparameters/'
     result_fixed_hiper = 'results/fixed-hyperparameters/'
     result_word_cloud = 'results/fixed-hyperparameters/word_cloud/'
