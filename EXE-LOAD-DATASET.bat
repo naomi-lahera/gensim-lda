@@ -4,7 +4,7 @@ set "abs_path=%~dp0"
 
 REM Definir la ruta del archivo JSON y el script Python usando la ruta absoluta
 set "config_file=%abs_path%config.json"
-set "python_file=%abs_path%src\fit-eval.py"
+set "python_file=%abs_path%src\dataset.py"
 
 REM Mostrar las rutas obtenidas (opcional para depuración)
 echo config path: %config_file%

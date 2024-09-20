@@ -1,20 +1,22 @@
 import spacy 
 import joblib
-from src.utils import *
+from utils import *
 from gensim.corpora import Dictionary
 from gensim.models import TfidfModel 
 
-try:
-    nlp = joblib.load(Path.nlp_path)    
-    print('Model loaded successfully from local space ✅')
-except:
-    nlp = spacy.load("en_core_web_sm")
-    
-    joblib.dump(nlp, Path.nlp_path)  
-    print('Model loaded successfully from remote space ✅')
+
 
 def build_vocab(texts):
     print('Building vocabulary and corpus...')
+    
+    try:
+        nlp = load_file(Path.nlp_path.value)    
+        print('Model loaded successfully from local space ✅')
+    except:
+        nlp = spacy.load("en_core_web_sm")
+
+        save_file(nlp, Path.nlp_path.value)  
+        print('Model loaded successfully from remote space ✅')
     
     if texts is None: raise Exception('No text to build vocabulary')
     

@@ -11,6 +11,11 @@ class Path(Enum):
     different_alphas = 'data/different_alphas.joblib'
     dataset = 'data/dataset.joblib'
     data = 'data/'
+    result = 'results/'
+    result_topics = 'results/topics.csv'
+    result_default_hiper = 'results/default-hyperparameters/'
+    result_fixed_hiper = 'results/fixed-hyperparameters/'
+    result_word_cloud = 'results/fixed-hyperparameters/word_cloud/'
     
 def load_config(config_path):
     try:
@@ -25,12 +30,20 @@ def load_config(config_path):
         sys.exit(1)
         
 def create_file_if_not_exists(file_path):
-    # Obtener el directorio del archivo
-    directory = os.path.dirname(file_path)  
-    # Crear el directorio si no existe
-    os.makedirs(directory, exist_ok=True)   
-    # Crear el archivo si no existe
-    open(file_path, 'a').close()
+    try:
+        os.makedirs(file_path)
+        print(f"✅ Created foler: {file_path}")
+    except FileExistsError:
+        print(f"Folder {file_path} already exists.")
+    except OSError as error:
+        print(f"Error creating folder: {error}")
+    
+    # # Obtener el directorio del archivo
+    # directory = os.path.dirname(file_path)  
+    # # Crear el directorio si no existe
+    # os.makedirs(directory, exist_ok=True)   
+    # # Crear el archivo si no existe
+    # open(file_path, 'a').close()
     
 def create_folder_if_not_exists(path):
     try:
@@ -41,17 +54,20 @@ def create_folder_if_not_exists(path):
     except OSError as error:
         print(f"Error creating folder: {error}")
 
-def load_file(path: Path):
+def load_file(path: str):
     try: 
-        return joblib.load(path.value)
+        return joblib.load(path)
     except Exception as e :
-        Exception(f'❌ Error loading file. {e}')
+        return Exception(f'❌ Error loading file. {e}')
 
-def save_file(data, path: Path):
+def save_file(data, path: str):
     try:
-        joblib.dump(data, path.value)
+        joblib.dump(data, path)
     except FileNotFoundError:
         create_file_if_not_exists(Path.dataset_path)
-        joblib.dump(data, path.value)
+        joblib.dump(data, path)
     except Exception as e:
         Exception(f'❌ Error saving file. {e}')
+        
+if __name__ == '__main__':        
+    load_file('cdfvybguihnjm')

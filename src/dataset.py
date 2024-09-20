@@ -8,7 +8,7 @@ def build():
     for doc in dataset.docs_iter()[:700]:
         texts.append(doc[2])
     
-    save_file(texts, Path.dataset)
+    save_file(texts, Path.dataset.value)
     
 if __name__ == '__main__':    
     create_folder_if_not_exists(Path.data.value)

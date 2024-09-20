@@ -1,4 +1,5 @@
 {
+    "save_loaded_dataset": 0,
     "k_fit_eval": 3,
     "lk_hyperparameters": 3,
     "rg_hyperparameters": 5,
