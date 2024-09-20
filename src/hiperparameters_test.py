@@ -1,28 +1,11 @@
 ### ------------------------------------------------------------- TRAINIG LDA --------------------------------------------------------------------- ###
 ### ------------------------------------------------------------- USING gensim --------------------------------------------------------------------- ###
 from gensim.models import LdaModel as lda
-from pprint import pprint
 from utils import *
 from preprocess import build_vocab
 from metrics import *
 import numpy as np
 import sys
-import csv
-    
-def print_topics(ldaModel):
-    pprint(ldaModel.print_topics())
-    
-def save_result_csv(lda_model, num_topics, filepath):
-    with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        
-        header = ['Topic'] + [f'Word_{i}' for i in range(1, 51)]  # 50 palabras por cada tópico
-        writer.writerow(header)
-        
-        for topic_id in range(num_topics):
-            topic = lda_model.show_topic(topic_id, topn=50)  # Obtener las 50 palabras más representativas del tópico
-            row = [f'Topic {topic_id}'] + [f'{word}: {weight:.4f}' for word, weight in topic]
-            writer.writerow(row)
         
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -36,9 +19,7 @@ if __name__ == '__main__':
     
     config_path = sys.argv[1]
     configuracion = load_config(config_path)
-    
-    num_topics = configuracion['k_fit_eval']
-    
+        
     left_topics = configuracion['lk_hyperparameters']
     right_topics = configuracion['rg_hyperparameters']
     lalpha = configuracion['lalpha_hyperparameters']
@@ -56,11 +37,14 @@ if __name__ == '__main__':
     _beta.append('symmetric')
     
     texts = load_file(Path.dataset_path.value)
-    # tokenized_texts, _dict, trans_TFIDF = build_vocab(texts)
+    tokenized_texts, _dict, trans_TFIDF = build_vocab(texts)
     
-    tokenized_texts = joblib.load('data/tokenized_texts.joblib')
-    _dict = joblib.load('data/_dict.joblib')
-    trans_TFIDF = joblib.load('data/trans_TFIDF.joblib')
+    # tokenized_texts = joblib.load('data/tokenized_texts.joblib')
+    # _dict = joblib.load('data/_dict.joblib')
+    # trans_TFIDF = joblib.load('data/trans_TFIDF.joblib')
+    # ldaModel = joblib.load('data/ldaModel.joblib')
+    # ldaModel = lda(trans_TFIDF, num_topics =3, id2word =_dict)                
+    # index = 0 
     
     print('Builded vocabulary ✅')
     
@@ -71,10 +55,13 @@ if __name__ == '__main__':
                 ldaModel = lda(trans_TFIDF, num_topics =k, id2word =_dict, alpha= alpha, eta= beta)                
                 cohe = coherence(ldaModel, tokenized_texts, _dict)
                 
+                # cohe = index
+                
                 print(f'K:{k}  Alpha: {alpha}  Beta: {beta} Coherence: {cohe}')
                 
                 result = {
                     'k': k,
+                    # 'k': 3,
                     'alpha': alpha,
                     'beta': beta,
                     'coherence': cohe,
@@ -82,8 +69,9 @@ if __name__ == '__main__':
                 }
                 coherences.append(result)
                 
+                # index += 1
+                
     models = sorted(coherences, key= lambda _dict: _dict['coherence'], reverse= True)
-    print(models)
     
     results = [{
                 'k': item['k'],
@@ -95,10 +83,12 @@ if __name__ == '__main__':
     best_model = models[0]  
     topic_word_cloud(best_model['model'], best_model['k'], save=True, path= Path.result_word_cloud.value)
     
-    joblib.dump(results, f'{Path.result_fixed_hiper.value}results.joblib')
+    # joblib.dump(results, f'{Path.result_fixed_hiper.value}results.joblib')
+    json.dump(results, open(f'{Path.result_fixed_hiper.value}results.json', 'w'))
     json.dump({'k': best_model['k'], 'alpha': best_model['alpha'], 'beta': best_model['beta']}, open(f'{Path.result_fixed_hiper.value}fixed_hyperparameters.json', 'w'))
     save_result_csv(best_model['model'], best_model['k'], Path.result_topics_hiper.value) 
     
+    k, alpha, beta, cohe = best_model['k'], best_model['alpha'], best_model['beta'], best_model['coherence']
     print('-'*25, '✨ Best Model' , '-'*25)
-    print(f'K:{best_model['k']}  Alpha: {best_model['alpha']}  Beta: {best_model['beta']} Coherence: {best_model['coherence']}')
+    print(f'K: {k}  Alpha: {alpha}  Beta: {beta} Coherence: {cohe}')
     print('-'*50)

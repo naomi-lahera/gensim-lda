@@ -3,6 +3,7 @@ from enum import Enum
 import json
 import sys
 import os
+import csv
 
 class Path(Enum):
     dataset_path = 'data/dataset.joblib'
@@ -16,6 +17,20 @@ class Path(Enum):
     result_default_hiper = 'results/default-hyperparameters/'
     result_fixed_hiper = 'results/fixed-hyperparameters/'
     result_word_cloud = 'results/fixed-hyperparameters/word_cloud/'
+    result_topics_hiper_default = 'results/default-hyperparameters/topics.csv'
+    result_word_cloud_default = 'results/default-hyperparameters/word_cloud/'
+    
+def save_result_csv(lda_model, num_topics, filepath):
+    with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        
+        header = ['Topic'] + [f'Word_{i}' for i in range(1, 51)]  # 50 palabras por cada tópico
+        writer.writerow(header)
+        
+        for topic_id in range(num_topics):
+            topic = lda_model.show_topic(topic_id, topn=50)  # Obtener las 50 palabras más representativas del tópico
+            row = [f'Topic {topic_id}'] + [f'{word}: {weight:.4f}' for word, weight in topic]
+            writer.writerow(row)
     
 def load_config(config_path):
     try:
@@ -28,22 +43,6 @@ def load_config(config_path):
     except json.JSONDecodeError:
         print("'❌ Error al leer el archivo de configuración. Asegúrate de que es un JSON válido.")
         sys.exit(1)
-        
-def create_file_if_not_exists(file_path):
-    try:
-        os.makedirs(file_path)
-        print(f"✅ Created foler: {file_path}")
-    except FileExistsError:
-        print(f"Folder {file_path} already exists.")
-    except OSError as error:
-        print(f"Error creating folder: {error}")
-    
-    # # Obtener el directorio del archivo
-    # directory = os.path.dirname(file_path)  
-    # # Crear el directorio si no existe
-    # os.makedirs(directory, exist_ok=True)   
-    # # Crear el archivo si no existe
-    # open(file_path, 'a').close()
     
 def create_folder_if_not_exists(path):
     try:
@@ -64,7 +63,6 @@ def save_file(data, path: str):
     try:
         joblib.dump(data, path)
     except FileNotFoundError:
-        create_file_if_not_exists(Path.dataset_path)
         joblib.dump(data, path)
     except Exception as e:
         Exception(f'❌ Error saving file. {e}')

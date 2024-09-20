@@ -1,10 +1,7 @@
 import spacy 
-import joblib
 from utils import *
 from gensim.corpora import Dictionary
 from gensim.models import TfidfModel 
-
-
 
 def build_vocab(texts):
     print('Building vocabulary and corpus...')
